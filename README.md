@@ -8,7 +8,7 @@ webgl 是在网页上绘制和渲染三维图形的技术，可以让用户与�
 
 之前学过的 `div+css`、`canvas 2d` 都是专注于二维图形的，他们虽然也能模拟一部分三维效果，但他们和 `webgl` 比起来，那就是玩具枪和 `ak47` 的区别。
 
-![ch01-001](assets/screenshots/ch01-001.png)
+![ch01-001](assets/screenshots/ch01-001.jpg)
 
 ### webgl行业背景
 
