@@ -46,6 +46,8 @@ webgl 是在网页上绘制和渲染三维图形的技术，可以让用户与�
 
 #### 绘图的基本步骤
 
+![ch01-004](assets/screenshots/ch01-004.jpg)
+
 点事最简单的图像，是几何图形最基本的组成部分。大概步骤如下：
 
 1. 找一张画布
@@ -74,9 +76,13 @@ ctx.fillRect(20,20,300,20);
 3. 找一只触控笔
 4. 开始画画
 
+![ch01-005](assets/screenshots/ch01-005.jpg)
+
 #### `canvas 2d`和`webgl`的绘图区别
 
-在 webgl 里绘图，或许你会觉得也可以像 `canvas 2d` 那样，就像下面这样写：
+> 我们的 `三维画笔` 是没法直接在 `二维画布` 上画画的 —— 因为画布不认！
+
+在 `webgl` 里绘图，或许你会觉得也可以像 `canvas 2d` 那样，就像下面这样写：
 
 ```javascript
 
@@ -104,23 +110,60 @@ ctx.fillRect(20,20,300,20);
 
 这个做翻译的人是谁，它就是我们之前提到过的`手绘板`，它在 webgl 里叫 “程序对象”
 
-#### webgl的绘图思路
+#### `webgl` 的绘图思路
 
 1. 找一台电脑 - 浏览器里内置的 `webgl渲染引擎`，负责渲染 `webgl图形`，只认 `GLSL ES语言`
 2. 找一块手绘板 - 程序对象，承载 `GLSL ES语言`，翻译 `GLSL ES语言` 和 `js语言`，使两者可以相互通信
 3. 找一支触控笔 - 通过 canvas 获取的 webgl类型的上下文对象，可以向手绘板传递绘图命令，并接受手绘板的状态信息
 4. 开始画画 - 通过 webgl 类型的上下文对象，用js画画
 
-#### webgl的绘图步骤
+#### `webgl` 的绘图步骤
 
-1. 在html中建立canvas画布
-2. 在js中获取canvas画布
-3. 使用canvas获取webgl绘图上下文
+1、在html中建立canvas画布
 
+```html
+<canvas id="canvas"></canvas>
+```
 
+2、在js中获取canvas画布
 
+```js
+const canvas = document.getElementById('canvas');
+```
 
+3、使用canvas获取webgl绘图上下文
 
+```js
+const gl = canvas.getContext('webgl');
+```
 
+4、在 script 中建立定点着色器和偏远着色器 `glsl es`
 
+```html
+// 定点着色器
+<script id="vertexShader" type="x-shader/x-vertex">
+  void main() {
+    gl_Position = ver4(0,0,0,1.0);
+    gl_PointSize = 100.0;
+  }
+</script>
 
+// 片元着色器
+<script id="fragmentShader" type="x-shader/x-fragment">
+  void main() {
+    gl_fragColor = ver4(1.0, 1.0, 0.0, 1.0);
+  }
+</script>
+```
+
+> 定点着色器和片元着色器的区别：
+> -定点着色器是衣架，片元着色器是衣服
+> -定点着色器是一个架子，而片元着色器是负责装饰这个架子的
+> -在实际中，这个架子(定点着色器)就是三维模型，其实没有任何色彩的，只有点位信息。而片元着色器就是基于定点信息来去填充定点之间的片元
+
+5、在 js 中获取定点着色器和片元着色器
+
+```js
+const vsSource = document.getElementById('vertexShader').innerText;
+const fsSource = document.getElementById('fragmentShader').innerText;
+```
