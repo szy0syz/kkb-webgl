@@ -167,3 +167,35 @@ const gl = canvas.getContext('webgl');
 const vsSource = document.getElementById('vertexShader').innerText;
 const fsSource = document.getElementById('fragmentShader').innerText;
 ```
+
+## `JS`交互`WebGL`
+
+### 着色器中的attribute变量
+
+```js
+attribute vec4 a_Position;
+void main() {
+  gl_Position = a_Position;
+  gl_PointSize = 50.0;
+}
+```
+
+- attribute 是存储限定符，是专用用于向外部导出与定位相关的对象，这类似与es6模板语法中的export
+- vec4 是变量类型，vec4 是4维矢量对象
+- a_Position 是变量名，之后在 js 中会根据这个变量名导入变量。这个变量名是一个指针，指向实际数据的存储位置，也就是说，我们如果在着色器外部改变了 a_Position 所指向的实际数据，那么在着色器中 a_Position 所对应的数据也会修改。
+
+### 在js中获取attribute变量
+
+我们再 js 里不能直接写 a_Position 来获取着色器变量
+因为着色器和js是两个不同的语种，着色器无法通过 window.a_Position 属性向全局暴露变量
+那我们就要在js 里获取着色器暴露的变量，就需要找人来翻译，这个人就是 `陈允许对象`
+
+```js
+const a_Position = gl.getAttributeLocation(gl.program, 'a_Position');
+```
+
+- gl 是 webgl 的上下文对象
+- gl.getAttribLocation() 是获取着色器中的 attribute 变量的方法
+- getAttribLocation() 方法的参数中：
+  - gl.program 是初始化着色器时，在山西该文对象上挂载的程序对象
+  - `a_Position` 是着色器暴露出的变量名
