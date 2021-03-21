@@ -199,3 +199,13 @@ const a_Position = gl.getAttributeLocation(gl.program, 'a_Position');
 - getAttribLocation() 方法的参数中：
   - gl.program 是初始化着色器时，在山西该文对象上挂载的程序对象
   - `a_Position` 是着色器暴露出的变量名
+
+### `webgl`的同步绘图原理
+
+`canvas2d` 可能会认为无法画出多点是 gl.clear(gl.COLOR_BUFFER_BIT)清理画布导致，因为我们在用 `canvas2d` 做动画时，其中就有一个 `ctx.clearRect()` 清理画布的方法。
+
+`gl.drawArrays(gl.POINTS,0,1)` 方法和 `canvas 2d` 里的 `ctx.draw()` 方法是不一样的，`ctx.draw()` 是真的像画画一样，一层一层的覆盖图像。
+
+`gl.drawArrays()` 方法只会同步绘图，走完了js主线程后，再次绘图时，就会从头再来。也就是说我们异步执行的`gl.drawArrays()` 方法会把画布上的图像都刷掉。
+
+
