@@ -168,15 +168,17 @@ const vsSource = document.getElementById('vertexShader').innerText;
 const fsSource = document.getElementById('fragmentShader').innerText;
 ```
 
-## `JS`交互`WebGL`
+
+
+## 3-js向attribute 变量传参的原理
 
 ### 着色器中的attribute变量
 
 ```js
 attribute vec4 a_Position;
-void main() {
-  gl_Position = a_Position;
-  gl_PointSize = 50.0;
+void main(){
+    gl_Position = a_Position;
+    gl_PointSize = 50.0;
 }
 ```
 
@@ -191,14 +193,74 @@ void main() {
 那我们就要在js 里获取着色器暴露的变量，就需要找人来翻译，这个人就是 `陈允许对象`
 
 ```js
-const a_Position = gl.getAttributeLocation(gl.program, 'a_Position');
+const a_Position=gl.getAttribLocation(gl.program,'a_Position');
 ```
 
-- gl 是 webgl 的上下文对象
-- gl.getAttribLocation() 是获取着色器中的 attribute 变量的方法
-- getAttribLocation() 方法的参数中：
-  - gl.program 是初始化着色器时，在山西该文对象上挂载的程序对象
+- gl 是 `webgl` 的上下文对象
+- `gl.getAttribLocation()` 是获取着色器中的 attribute 变量的方法
+- `getAttribLocation()` 方法的参数中：
+  - `gl.program` 是初始化着色器时，在山西该文对象上挂载的程序对象
   - `a_Position` 是着色器暴露出的变量名
+
+### 在 `js` 中修改 `attribute` 变量
+
+`attribute` 变量即使在js中获取了，他也只是一个只会说 `GLSL ES` 语言的人，他不认识 `js` 语言，所以我们不能用 `js` 的语法来修改 `attribute` 变量的值：
+
+```js
+a_Position.a=1.0
+```
+
+我们得用特定的方法来改变 `a_Position` 的值：
+
+```js
+gl.vertexAttrib3f(a_Position,0.0,0.5,0.0);
+```
+
+- gl.vertexAttrib3f() 是改变变量值的方法。
+- gl.vertexAttrib3f() 方法的参数中：
+
+  - a_Position 就是咱们之前获取的着色器变量。
+
+  - 后面的3个参数是顶点的x、y、z位置
+
+`a_Position` 被修改后，我们就可以使用上下文对象绘制最新的点位了
+
+```js
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.POINTS, 0, 1);
+```
+
+### vertexAttrib3f()的同族函数
+
+`gl.vertexAttrib3f(location,v0,v1,v2)` 方法是一系列修改着色器中的 `attribute` 变量的方法之一，它还有许多同族方法，如：
+
+```js
+gl.vertexAttrib1f(location,v0) 
+gl.vertexAttrib2f(location,v0,v1)
+gl.vertexAttrib3f(location,v0,v1,v2)
+gl.vertexAttrib4f(location,v0,v1,v2,v3)
+```
+
+它们都可以改变attribute 变量的前n 个值。
+
+比如 vertexAttrib1f() 方法自定一个矢量对象的v0值，v1、v2 则默认为0.0，v3默认为1.0，其数值类型为float 浮点型。
+
+### webgl 函数的命名规律
+
+GLSL ES里函数的命名结构是：<基础函数名><参数个数><参数类型>
+
+以vertexAttrib3f(location,v0,v1,v2,v3) 为例：
+
+- vertexAttrib：基础函数名
+- 3：参数个数，这里的参数个数是要传给变量的参数个数，而不是当前函数的参数个数
+- f：参数类型，f 代表float 浮点类型，除此之外还有i 代表整型，v代表数字……
+
+关于用js 控制点位的方法咱们就说到这，接下咱们说一个用鼠标控制点位的例子。
+
+
+
+
 
 ### `webgl`的同步绘图原理
 
@@ -207,5 +269,14 @@ const a_Position = gl.getAttributeLocation(gl.program, 'a_Position');
 `gl.drawArrays(gl.POINTS,0,1)` 方法和 `canvas 2d` 里的 `ctx.draw()` 方法是不一样的，`ctx.draw()` 是真的像画画一样，一层一层的覆盖图像。
 
 `gl.drawArrays()` 方法只会同步绘图，走完了js主线程后，再次绘图时，就会从头再来。也就是说我们异步执行的`gl.drawArrays()` 方法会把画布上的图像都刷掉。
+
+
+
+
+
+
+
+
+
 
 
