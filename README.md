@@ -442,9 +442,9 @@ import {initShaders} from '../jsm/Utils.js';
 
 
 
-## 第二章 用js控制一个点的位置
+## 第二章 控制一个点的位置
 
-## 3-js向attribute 变量传参的原理
+### js向attribute变量传参的原理
 
 ### 着色器中的attribute变量
 
@@ -476,7 +476,7 @@ const a_Position=gl.getAttribLocation(gl.program,'a_Position');
   - `gl.program` 是初始化着色器时，在山西该文对象上挂载的程序对象
   - `a_Position` 是着色器暴露出的变量名
 
-### 在 `js` 中修改 `attribute` 变量
+### 在 js中修改attribute变量
 
 `attribute` 变量即使在js中获取了，他也只是一个只会说 `GLSL ES` 语言的人，他不认识 `js` 语言，所以我们不能用 `js` 的语法来修改 `attribute` 变量的值：
 
@@ -520,7 +520,7 @@ gl.vertexAttrib4f(location,v0,v1,v2,v3)
 
 比如 vertexAttrib1f() 方法自定一个矢量对象的v0值，v1、v2 则默认为0.0，v3默认为1.0，其数值类型为float 浮点型。
 
-### webgl 函数的命名规律
+### webgl函数的命名规律
 
 GLSL ES里函数的命名结构是：<基础函数名><参数个数><参数类型>
 
@@ -675,7 +675,7 @@ canvas.addEventListener('click',function(event){
 
 `canvas2d` 可能会认为无法画出多点是 gl.clear(gl.COLOR_BUFFER_BIT)清理画布导致，因为我们在用 `canvas2d` 做动画时，其中就有一个 `ctx.clearRect()` 清理画布的方法。
 
-### 3-1 用实践得真知
+#### 3-1 用实践得真知
 
 ```js
 gl.vertexAttrib2f(a_Position,x,y);
