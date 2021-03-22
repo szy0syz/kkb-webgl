@@ -260,6 +260,51 @@ GLSL ES里函数的命名结构是：<基础函数名><参数个数><参数类�
 
 
 
+## 用鼠标控制点位
+
+> 要用鼠标控制一个点的位置，首先要知道鼠标点在webgl 坐标系中的位置，这样才能让一个点出现在我们鼠标点击的位置。
+
+### 获取鼠标点在webgl 坐标系中的位置
+
+对于鼠标点在webgl 坐标系中的位置，我们是无法直接获取的。所以我们得先获取鼠标在canvas 这个DOM元素中的位置。
+
+#### 获取鼠标在canvas 画布中的css 位置
+
+```js
+canvas.addEventListener('click',function(event){
+    const {clientX,clientY}=event;
+    const {left,top}=canvas.getBoundingClientRect();
+    const [cssX,cssY]=[
+        clientX-left,
+        clientY-top
+    ];
+})
+```
+
+对于cssX,cssY 的获取，大家应该都不陌生，这在canvas 2d 也会用到。
+
+我们可以用向量减法来求解。
+
+已知：向量a(clientX,clientY)，向量c(left,top)
+
+求：向量c
+
+解：
+
+由向量的减法得：向量a减向量c，等于以向量c 的终点为起点，以向量a的终点为终点的向量c
+
+所以：向量c=a-c=(clientX-left,clientY-top)
+
+将向量c 视之为坐标点c，那点c 就是鼠标在canvas 画布中的css 位。
+
+因为html 坐标系中的坐标原点和轴向与canvas 2d是一致的，所以在我们没有用css 改变画布大小，也没有对其坐标系做变换的情况下，鼠标点在canvas 画布中的css 位就是鼠标点在canvas 2d坐标系中的位置。
+
+
+
+
+
+
+
 
 
 ### `webgl`的同步绘图原理
